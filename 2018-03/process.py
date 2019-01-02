@@ -16,17 +16,28 @@ def parseLine(line):
     return id, x, y, length, width
 
 sheet = getSheet(1000)
-overbooked = set()
+claims = set()
 
 with open("input.txt", "r") as inputFile:
     for line in inputFile:
         id, x, y, length, width = parseLine(line)
+        claims.add(id)
         for i in range(length):
             for j in range(width):
                 currentX = x + i
                 currentY = y + j
-                if sheet[currentX][currentY] == True:
-                    overbooked.add((currentX, currentY))
-                sheet[currentX][currentY] = True
+                if sheet[currentX][currentY] == False:
+                    sheet[currentX][currentY] = id
+                else:
+                    if sheet[currentX][currentY] in claims:
+                        claims.remove(sheet[currentX][currentY])
+                    if id in claims:
+                        claims.remove(id)
+                    sheet[currentX][currentY] = True
 
-print "Overbooked spots: {}".format(len(overbooked))
+def countTrues(row):
+    return sum(map(lambda x: int(x is True), row))
+overbooked = sum(map(countTrues, sheet))
+print "Overbooked spots: {} ({})".format(overbooked, overbooked == 118322)
+
+print "Non overlapping: {}".format(list(claims)[0])
