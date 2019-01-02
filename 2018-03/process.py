@@ -2,8 +2,9 @@
 
 from collections import defaultdict
 
-def getSheet(x):
-    return [[False] * x] * x
+def getSheet(dimension):
+    row = lambda x: [False] * x
+    return map(row, map(lambda x: dimension, range(dimension)))
 
 def parseLine(line):
     #3 @ 937,817: 10x25
@@ -22,9 +23,10 @@ with open("input.txt", "r") as inputFile:
         id, x, y, length, width = parseLine(line)
         for i in range(length):
             for j in range(width):
-                if sheet[x+i][y+j]:
-                    overbooked.add((x+i,y+j))
-                sheet[x+i][y+j] = True
+                currentX = x + i
+                currentY = y + j
+                if sheet[currentX][currentY] == True:
+                    overbooked.add((currentX, currentY))
+                sheet[currentX][currentY] = True
 
-print overbooked
 print "Overbooked spots: {}".format(len(overbooked))
