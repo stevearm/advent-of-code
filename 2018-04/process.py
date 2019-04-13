@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from collections import defaultdict
 import dateutil.parser
 
 # [1518-03-11 00:45] wakes up
@@ -57,6 +58,18 @@ def collapse(eventStream):
         shifts.append(currentShift)
     return shifts
 
+def findSleepiestGuard(shifts):
+    sleepHoursByGuard = defaultdict(int)
+    for monthDay, guardId, bitmap in shifts:
+        sleepHoursByGuard[str(guardId)] += sum(map(lambda x: 1 if x else 0, bitmap))
+    maxGuard = None
+    maxHours = 0
+    for guardId, sleepHours in sleepHoursByGuard.iteritems():
+        if sleepHours > maxHours:
+            maxHours = sleepHours
+            maxGuard = int(guardId)
+    return maxGuard
+
 def printDataPoints(dataPoints):
     print("Datapoints:")
     for dataPoint in dataPoints:
@@ -78,9 +91,28 @@ with open("input.txt", "r") as inputFile:
 # Sort by date
 dataPoints.sort(key=lambda x: x[0])
 
-printDataPoints(dataPoints[:10])
-
+# Compact into shifts
 shifts = collapse(dataPoints)
 
+# Find sleepiest guard
+sleepiestGuardId = findSleepiestGuard(shifts)
 
-printShifts(shifts[:3])
+sleepSummary = [0] * 60
+for monthDay, guardId, bitmap in shifts:
+    if guardId != sleepiestGuardId:
+        continue
+    for i in range(60):
+        if bitmap[i]:
+            sleepSummary[i] += 1
+maxSleepCount = 0
+maxSleepTime = 0
+for i in range(60):
+    if sleepSummary[i] > maxSleepCount:
+        maxSleepCount = sleepSummary[i]
+        maxSleepTime = i
+
+print("Guard {} slept the most on minute {}".format(sleepiestGuardId, maxSleepTime))
+print("Answer {}".format(sleepiestGuardId * maxSleepTime))
+
+#printDataPoints(dataPoints[:10])
+#printShifts(shifts[:5])
