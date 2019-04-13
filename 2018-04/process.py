@@ -70,6 +70,16 @@ def findSleepiestGuard(shifts):
             maxGuard = int(guardId)
     return maxGuard
 
+def getMinuteSleepSumariesByGuard(shifts):
+    sleepSummariesByGuard = dict()
+    for monthDay, guardId, bitmap in shifts:
+        if str(guardId) not in sleepSummariesByGuard:
+            sleepSummariesByGuard[str(guardId)] = [0] * 60
+        for i in range(60):
+            if bitmap[i]:
+                sleepSummariesByGuard[str(guardId)][i] += 1
+    return sleepSummariesByGuard
+
 def printDataPoints(dataPoints):
     print("Datapoints:")
     for dataPoint in dataPoints:
@@ -94,25 +104,28 @@ dataPoints.sort(key=lambda x: x[0])
 # Compact into shifts
 shifts = collapse(dataPoints)
 
+# Coallate by guard
+sleepSummariesByGuard = getMinuteSleepSumariesByGuard(shifts)
+
 # Find sleepiest guard
 sleepiestGuardId = findSleepiestGuard(shifts)
-
-sleepSummary = [0] * 60
-for monthDay, guardId, bitmap in shifts:
-    if guardId != sleepiestGuardId:
-        continue
-    for i in range(60):
-        if bitmap[i]:
-            sleepSummary[i] += 1
 maxSleepCount = 0
 maxSleepTime = 0
 for i in range(60):
-    if sleepSummary[i] > maxSleepCount:
-        maxSleepCount = sleepSummary[i]
+    if sleepSummariesByGuard[str(sleepiestGuardId)][i] > maxSleepCount:
+        maxSleepCount = sleepSummariesByGuard[str(sleepiestGuardId)][i]
         maxSleepTime = i
-
 print("Guard {} slept the most on minute {}".format(sleepiestGuardId, maxSleepTime))
-print("Answer {}".format(sleepiestGuardId * maxSleepTime))
+print("Part 1 answer {}".format(sleepiestGuardId * maxSleepTime))
+
+# Find guard who slept the most on a single minute
+bestChoice = (0, 0, 0)
+for guardIdStr, bitmap in sleepSummariesByGuard.iteritems():
+    for i in range(60):
+        if bitmap[i] > bestChoice[2]:
+            bestChoice = (int(guardIdStr), i, bitmap[i])
+print("Guard {} slept on minute {} for {}".format(*bestChoice))
+print("Part 2 answer {}".format(bestChoice[0] * bestChoice[1]))
 
 #printDataPoints(dataPoints[:10])
 #printShifts(shifts[:5])
