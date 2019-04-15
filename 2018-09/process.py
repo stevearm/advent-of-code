@@ -9,6 +9,29 @@ with open("input.txt", "r") as inputFile:
         if not result:
             raise Exception("Something wrong with input: {}. Got result {}".format(line, result))
         players = int(result.group(1))
-        points = int(result.group(2))
+        lastMarble = int(result.group(2))
 
-print("Game has {} players and last marble is worth {}".format(players, points))
+def takeTurn(field, currentMarbleIndex, newMarbleValue):
+    if newMarbleValue % 23 == 0:
+        removeIndex = (currentMarbleIndex - 7) % len(field)
+        newField = field[:removeIndex] + field[removeIndex+1:]
+        return newField, removeIndex, field[removeIndex] + newMarbleValue
+
+    insertIndex = (currentMarbleIndex + 2) % len(field)
+    if insertIndex == 0:
+        # This is just to make it print the same way as the examples
+        insertIndex = len(field)
+    newField = field[:insertIndex] + [newMarbleValue] + field[insertIndex:]
+
+    return newField, insertIndex, 0
+
+def printHighestScore(players, lastMarble):
+    field = [0]
+    currentMarbleIndex = 0
+    marbleValue = 1
+    while marbleValue <= 25:
+        field, currentMarbleIndex, capturedValue = takeTurn(field, currentMarbleIndex, marbleValue)
+        marbleValue += 1
+        print(field)
+
+printHighestScore(players, lastMarble)
