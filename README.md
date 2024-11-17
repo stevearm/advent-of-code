@@ -1,1 +1,1 @@
-This is [adventofcode.com/2018](https://adventofcode.com/2018) (which I'm logged in to through Github)
+Solutions for some [Advent of Code](https://adventofcode.com) problems. I log into that site using my `stevearm` Github account.
