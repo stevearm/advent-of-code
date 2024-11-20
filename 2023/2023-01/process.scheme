@@ -1,0 +1,11 @@
+(define (read-file-to-list filename)
+        (call-with-input-file
+            filename
+            (lambda (p)
+                (let f ([x (read p)])
+                       (if (eof-object? x)
+                       '()
+                       (cons x (f (read p)))))))
+
+(define (process-file filename)
+        (car (read-file-to-list filename)))
