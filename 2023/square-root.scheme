@@ -1,0 +1,15 @@
+(define (abs x) (if (< x 0) (* x -1) x))
+(define (avg x y) (/ (+ x y) 2))
+
+(define (is-converged? x y) (< (abs (- x y)) 0.1))
+(define (better-guess guess original)
+        (avg guess (/ original guess)))
+
+(define (guess x original)
+        (if (is-converged? (* x x) original)
+            x
+            (guess (better-guess x original) original)))
+
+(define (sqrt x)
+        (guess (/ x 2.0) x))
+
