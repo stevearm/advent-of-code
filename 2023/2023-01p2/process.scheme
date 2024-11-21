@@ -1,0 +1,31 @@
+(define (read-file-to-list filename)
+        (call-with-input-file
+            filename
+            (lambda (p)
+                (let f ((x (read-line p)))
+                       (if (eof-object? x)
+                       '()
+                       (cons x (f (read-line p))))))))
+
+; Walk through the string returning first character that's a digit
+(define (process-string-at-char input-string index direction)
+        (let ((input-char (string-ref input-string index)))
+             (if (char-numeric? input-char)
+                 input-char
+                 (process-string-at-char input-string (+ index direction) direction))))
+
+; Create a number from the first digit from left concatenated with first digit from right
+(define (process-string input-string)
+        (string->number (string
+                (process-string-at-char input-string 0 1)
+                (process-string-at-char input-string (- (string-length input-string) 1) -1))))
+
+; Read the file, process-string for each line, then sum the results
+(define (process-file filename)
+        (apply + (map process-string (read-file-to-list filename))))
+
+; Run the test. Should print 281
+; (define (run-test) (process-file "2023-01p2/input-test.txt"))
+
+; Run real question. Gives 54388
+(define (run-test) (process-file "2023-01p2/input.txt"))
