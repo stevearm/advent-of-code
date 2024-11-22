@@ -7,6 +7,27 @@
                        '()
                        (cons x (f (read-line p))))))))
 
+(define (string-replace input-string to-find replace)
+        (let ((to-find-length (string-length to-find))
+              (input-string-length (string-length input-string)))
+             (if (< input-string-length to-find-length)
+                 input-string
+                 (if (equal? to-find (substring input-string 0 to-find-length))
+                     (string replace
+                             (string-replace (substring input-string to-find-length input-string-length)
+                                             to-find
+                                             replace))
+                     (string (substring input-string 0 1)
+                             (string-replace (substring input-string 1 input-string-length)
+                                             to-find
+                                             replace))))))
+
+(define (turn-numbers-to-digits input)
+        (fold-left string-replace
+                   input
+                   '("one" "two" "three" "four" "five" "six" "seven" "eight" "nine")
+                   '("1"   "2"   "3"     "4"    "5"    "6"   "7"     "8"     "9")))
+
 ; Walk through the string returning first character that's a digit
 (define (process-string-at-char input-string index direction)
         (let ((input-char (string-ref input-string index)))
@@ -27,5 +48,8 @@
 ; Run the test. Should print 281
 ; (define (run-test) (process-file "2023-01p2/input-test.txt"))
 
-; Run real question. Gives 54388
-(define (run-test) (process-file "2023-01p2/input.txt"))
+; Run real question.
+; (define (run-test) (process-file "2023-01p2/input.txt"))
+
+; (define (run-test) (string-replace "testoneyesoneno" "one" "1"))
+(define (run-test) (turn-numbers-to-digits "testoneyesonenotwomaybe"))
