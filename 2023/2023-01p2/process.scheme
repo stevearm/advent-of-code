@@ -43,13 +43,15 @@
 
 ; Read the file, process-string for each line, then sum the results
 (define (process-file filename)
-        (apply + (map process-string (read-file-to-list filename))))
+        (apply + (map process-string (map turn-numbers-to-digits (read-file-to-list filename)))))
 
 ; Run the test. Should print 281
-; (define (run-test) (process-file "2023-01p2/input-test.txt"))
+(define (run-test) (process-file "2023-01p2/input-test.txt"))
 
 ; Run real question.
 ; (define (run-test) (process-file "2023-01p2/input.txt"))
 
 ; (define (run-test) (string-replace "testoneyesoneno" "one" "1"))
-(define (run-test) (turn-numbers-to-digits "testoneyesonenotwomaybe"))
+; (define (run-test) (turn-numbers-to-digits "testoneyesonenotwomaybe"))
+; (define (run-test) (map turn-numbers-to-digits (car (map process-string (read-file-to-list "2023-01p2/input-test.txt")))))
+; (define (run-test) (map process-string (map turn-numbers-to-digits (read-file-to-list "2023-01p2/input-test.txt"))))
