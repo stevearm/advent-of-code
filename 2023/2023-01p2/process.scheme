@@ -7,6 +7,14 @@
                        '()
                        (cons x (f (read-line p))))))))
 
+(define (starts-with? input-string prefix-string)
+        ; (equal? prefix-string (substring input-string 0 (string-length prefix-string))))
+        (let ((input-length (string-length input-string))
+              (prefix-length (string-length prefix-string)))
+             (if (< input-length prefix-length)
+                 #f
+                 (equal? prefix-string (substring input-string 0 prefix-length)))))
+
 (define (string-replace input-string to-find replace)
         (let ((to-find-length (string-length to-find))
               (input-string-length (string-length input-string)))
@@ -23,10 +31,17 @@
                                              replace))))))
 
 (define (turn-numbers-to-digits input)
-        (fold-left string-replace
-                   input
-                   '("one" "two" "three" "four" "five" "six" "seven" "eight" "nine")
-                   '("1"   "2"   "3"     "4"    "5"    "6"   "7"     "8"     "9")))
+        (cond ((equal? input "") '())
+              ((starts-with? input "one")   (string "1" (turn-numbers-to-digits (substring input 1 (string-length input)))))
+              ((starts-with? input "two")   (string "2" (turn-numbers-to-digits (substring input 1 (string-length input)))))
+              ((starts-with? input "three") (string "3" (turn-numbers-to-digits (substring input 1 (string-length input)))))
+              ((starts-with? input "four")  (string "4" (turn-numbers-to-digits (substring input 1 (string-length input)))))
+              ((starts-with? input "five")  (string "5" (turn-numbers-to-digits (substring input 1 (string-length input)))))
+              ((starts-with? input "six")   (string "6" (turn-numbers-to-digits (substring input 1 (string-length input)))))
+              ((starts-with? input "seven") (string "7" (turn-numbers-to-digits (substring input 1 (string-length input)))))
+              ((starts-with? input "eight") (string "8" (turn-numbers-to-digits (substring input 1 (string-length input)))))
+              ((starts-with? input "nine")  (string "9" (turn-numbers-to-digits (substring input 1 (string-length input)))))
+              (else (string (substring input 0 1) (turn-numbers-to-digits (substring input 1 (string-length input)))))))
 
 ; Walk through the string returning first character that's a digit
 (define (process-string-at-char input-string index direction)
@@ -46,10 +61,10 @@
         (apply + (map process-string (map turn-numbers-to-digits (read-file-to-list filename)))))
 
 ; Run the test. Should print 281
-(define (run-test) (process-file "2023-01p2/input-test.txt"))
+; (define (run-test) (process-file "2023-01p2/input-test.txt"))
 
-; Run real question.
-; (define (run-test) (process-file "2023-01p2/input.txt"))
+; Run real question. Returns 53515
+(define (run-test) (process-file "2023-01p2/input.txt"))
 
 ; (define (run-test) (string-replace "testoneyesoneno" "one" "1"))
 ; (define (run-test) (turn-numbers-to-digits "testoneyesonenotwomaybe"))
