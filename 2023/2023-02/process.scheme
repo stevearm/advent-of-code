@@ -44,16 +44,23 @@
               (max (car (cdr a)) (car (cdr b)))
               (max (car (cdr (cdr a))) (car (cdr (cdr b))))))
 
+(define (is-possible? game)
+        (let ((id (car game))
+              (r (car (cdr game)))
+              (g (car (cdr (cdr game))))
+              (b (car (cdr (cdr (cdr game))))))
+             (and (<= r 12) (<= g 13) (<= b 14))))
+
 ; Return the sum of ids of games possible with 12 red, 13 green, and 14 blue
 (define (process-file filename)
-        ; (car
-        (map split-game (read-file-to-list filename)))
-        ; )
+        (apply + (map (lambda (x) (car x))
+                      (filter is-possible?
+                              (map split-game (read-file-to-list filename))))))
 
 ; (define (run-test) (process-picks "3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"))
 
 ; Run the test. Should print 8
-(define (run-test) (process-file "2023-02/input-test.txt"))
+; (define (run-test) (process-file "2023-02/input-test.txt"))
 
-; Run real question. Returns ?
-; (define (run-test) (process-file "2023-2/input.txt" ))
+; Run real question. Returns 2545
+(define (run-test) (process-file "2023-02/input.txt" ))
