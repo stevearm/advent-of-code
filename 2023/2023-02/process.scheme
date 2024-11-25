@@ -7,12 +7,45 @@
                        '()
                        (cons x (f (read-line p))))))))
 
+(define (split-string input-string delimiter)
+        (let ((position (string-search-forward delimiter input-string)))
+             (if (eq? #f position)
+                 (cons input-string '())
+                 (cons (substring input-string 0 position)
+                       (split-string (substring input-string
+                                                (+ position (string-length delimiter))
+                                                (string-length input-string))
+                                     delimiter)))))
+
+(define (process-pick pick)
+        (map (lambda (color-picks)
+                     (let ((parts (split-string color-picks " ")))
+                          (let ((color-count (string->number (car parts)))
+                                (color-name (cadr parts)))
+                               (cond ((equal? color-name "red")   (cons color-count '(0 0)))
+                                     ((equal? color-name "green") (cons 0 (cons color-count '(0))))
+                                     ((equal? color-name "blue")  (cons 0 (cons 0 (cons color-count '()))))))))
+             (split-string pick ", ")))
+
+(define (process-picks picks-string)
+        (map process-pick (split-string picks-string "; ")))
+
+(define (split-game line)
+        (let ((parts (split-string line ": ")))
+             (cons (string->number (substring (car parts) 5 (string-length (car parts))))
+                   (map process-picks (split-string (cadr parts) "; ")))))
+
 ; Return the sum of ids of games possible with 12 red, 13 green, and 14 blue
 (define (process-file filename)
-        (read-file-to-list filename))
+        ; (split-string (car (read-file-to-list filename)) ": "))
+        (car
+        (map split-game (read-file-to-list filename)))
+        )
+
+; (define (run-test) (process-picks "3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"))
 
 ; Run the test. Should print 8
-(define (run-test) (read-file-to-list "2023-02/input-test.txt"))
+(define (run-test) (process-file "2023-02/input-test.txt"))
 
 ; Run real question. Returns ?
 ; (define (run-test) (process-file "2023-2/input.txt" ))
