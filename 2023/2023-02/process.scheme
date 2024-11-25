@@ -28,19 +28,27 @@
              (split-string pick ", ")))
 
 (define (process-picks picks-string)
-        (map process-pick (split-string picks-string "; ")))
+        (fold-right max-color-counts
+                    '(0 0 0)
+                    (fold-right append
+                                '()
+                                (map process-pick (split-string picks-string "; ")))))
 
 (define (split-game line)
         (let ((parts (split-string line ": ")))
              (cons (string->number (substring (car parts) 5 (string-length (car parts))))
-                   (map process-picks (split-string (cadr parts) "; ")))))
+                   (process-picks (cadr parts)))))
+
+(define (max-color-counts a b)
+        (list (max (car a) (car b))
+              (max (car (cdr a)) (car (cdr b)))
+              (max (car (cdr (cdr a))) (car (cdr (cdr b))))))
 
 ; Return the sum of ids of games possible with 12 red, 13 green, and 14 blue
 (define (process-file filename)
-        ; (split-string (car (read-file-to-list filename)) ": "))
-        (car
+        ; (car
         (map split-game (read-file-to-list filename)))
-        )
+        ; )
 
 ; (define (run-test) (process-picks "3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"))
 
