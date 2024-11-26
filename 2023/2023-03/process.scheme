@@ -1,0 +1,14 @@
+(define (read-file-to-list filename)
+        (call-with-input-file
+            filename
+            (lambda (p)
+                (let f ((x (read-line p)))
+                       (if (eof-object? x)
+                       '()
+                       (cons x (f (read-line p))))))))
+
+; Run the sample. Should print 4361
+(define (run-test) (read-file-to-list "2023-03/input-test.txt"))
+
+; Run real question. Returns ?
+; (define (run-test) (process-file "2023-03/input.txt" ))
