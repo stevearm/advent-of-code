@@ -57,10 +57,22 @@
                       (filter is-possible?
                               (map split-game (read-file-to-list filename))))))
 
+(define (find-game-power game)
+        (fold-right * 1 (cdr game)))
+
+(define (sum-of-game-powers filename)
+        (apply + (map find-game-power (map split-game (read-file-to-list filename)))))
+
 ; (define (run-test) (process-picks "3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"))
 
-; Run the test. Should print 8
+; Run the sample for part 1. Should print 8
 ; (define (run-test) (process-file "2023-02/input-test.txt"))
 
-; Run real question. Returns 2545
-(define (run-test) (process-file "2023-02/input.txt" ))
+; Run real question for part 1. Returns 2545
+; (define (run-test) (process-file "2023-02/input.txt" ))
+
+; Run the sample for part 2. Should print 2286
+; (define (run-test) (sum-of-game-powers "2023-02/input-test.txt"))
+
+; Run real question for part 2. Returns 78111
+(define (run-test) (sum-of-game-powers "2023-02/input.txt" ))
