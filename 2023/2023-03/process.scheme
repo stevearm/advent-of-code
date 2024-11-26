@@ -14,9 +14,11 @@
                        ((and (char<=? #\0 (car row-char-array)) (char<=? (car row-char-array) #\9)) remainder)
                        (else (cons (list row-number column-number) remainder))))))
 
-; (define (get-symbol-points diagram)
-;         (if (equal? ))
-;         (append (get-symbol-points-for-row
+(define (get-symbol-points row-number diagram)
+        (if (eq? '() diagram)
+            '()
+            (append (get-symbol-points-for-row row-number 0 (string->list (car diagram)))
+                    (get-symbol-points (+ 1 row-number) (cdr diagram)))))
 
 (define (sum-of-part-numbers filename)
         (read-file-to-list filename))
@@ -27,7 +29,8 @@
 ; for each number. Filter any number where a symbol isn't inside it's
 ; coords
 
-(define (run-test) (get-symbol-points-for-row 1 0 (string->list "...$.*....")))
+; (define (run-test) (get-symbol-points-for-row 1 0 (string->list "...$.*....")))
+(define (run-test) (get-symbol-points 0 (read-file-to-list "2023-03/input-test.txt")))
 
 ; Run the sample. Should print 4361
 ; (define (run-test) (read-file-to-list "2023-03/input-test.txt"))
