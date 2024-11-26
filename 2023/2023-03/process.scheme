@@ -8,14 +8,15 @@
                            (cons x (f (read-line p))))))))
 
 (define (get-symbol-points-for-row row-number column-number row-char-array)
-        (cond ((eq? '() row-char-array) '())
-              ((char=? #\. (car row-char-array))
-               (get-symbol-points-for-row row-number (+ 1 column-number) (cdr row-char-array)))
-              ((and (char<=? #\0 (car row-char-array))
-                    (char<=? (car row-char-array) #\9))
-               (get-symbol-points-for-row row-number (+ 1 column-number) (cdr row-char-array)))
-              (else (cons (list row-number column-number)
-                          (get-symbol-points-for-row row-number (+ 1 column-number) (cdr row-char-array))))))
+        (if (eq? '() row-char-array) '()
+            (let ((remainder (get-symbol-points-for-row row-number (+ 1 column-number) (cdr row-char-array))))
+                 (cond ((char=? #\. (car row-char-array)) remainder)
+                       ((and (char<=? #\0 (car row-char-array)) (char<=? (car row-char-array) #\9)) remainder)
+                       (else (cons (list row-number column-number) remainder))))))
+
+; (define (get-symbol-points diagram)
+;         (if (equal? ))
+;         (append (get-symbol-points-for-row
 
 (define (sum-of-part-numbers filename)
         (read-file-to-list filename))
