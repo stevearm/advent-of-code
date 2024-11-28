@@ -70,7 +70,9 @@
         (let ((list-of-input (read-file-to-list filename)))
         (let ((symbols (get-symbol-points 0 list-of-input))
               (potential-parts (get-numbers 0 list-of-input)))
-             0)))
+             (apply + (map (lambda (part) (car part))
+                           (filter (lambda (part) (is-part? part symbols))
+                                   potential-parts))))))
 
 
 ; Plan for solving
@@ -91,13 +93,13 @@
 ; (define (run-test) (get-numbers 0 (read-file-to-list "2023-03/input-test.txt")))
 
 ; Should not be a part
-(define (run-test) (is-part? '(114 4 -1 8 1) (get-symbol-points 0 (read-file-to-list "2023-03/input-test.txt"))))
+; (define (run-test) (is-part? '(114 4 -1 8 1) (get-symbol-points 0 (read-file-to-list "2023-03/input-test.txt"))))
 
 ; Should be a part
 ; (define (run-test) (is-part? '(755 5 6 9 8) (get-symbol-points 0 (read-file-to-list "2023-03/input-test.txt"))))
 
 ; Run the sample. Should print 4361
-; (define (run-test) (read-file-to-list "2023-03/input-test.txt"))
+; (define (run-test) (sum-of-part-numbers "2023-03/input-test.txt"))
 
-; Run real question. Returns ?
-; (define (run-test) (read-file-to-list "2023-03/input.txt" ))
+; Run real question. Returns 539713
+(define (run-test) (sum-of-part-numbers "2023-03/input.txt" ))
