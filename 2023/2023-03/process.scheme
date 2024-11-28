@@ -7,30 +7,70 @@
                            '()
                            (cons x (f (read-line p))))))))
 
-(define (get-symbol-points-for-row row-number column-number row-char-array)
+(define (digit? char)
+        (and (char<=? #\0 char) (char<=? char #\9)))
+
+(define (get-symbol-points-for-row column-number row-number row-char-array)
         (if (eq? '() row-char-array) '()
-            (let ((remainder (get-symbol-points-for-row row-number (+ 1 column-number) (cdr row-char-array))))
+            (let ((remainder (get-symbol-points-for-row (+ 1 column-number) row-number (cdr row-char-array))))
                  (cond ((char=? #\. (car row-char-array)) remainder)
-                       ((and (char<=? #\0 (car row-char-array)) (char<=? (car row-char-array) #\9)) remainder)
+                       ((digit? (car row-char-array)) remainder)
                        (else (cons (list row-number column-number) remainder))))))
 
 (define (get-symbol-points row-number diagram)
         (if (eq? '() diagram)
             '()
-            (append (get-symbol-points-for-row row-number 0 (string->list (car diagram)))
+            (append (get-symbol-points-for-row 0 row-number (string->list (car diagram)))
                     (get-symbol-points (+ 1 row-number) (cdr diagram)))))
 
+(define (number-length digits-already-found row-char-array)
+        (cond ((eq? '() row-char-array) (list digits-already-found '()))
+              ((digit? (car row-char-array))
+               (number-length (+ 1 digits-already-found) (cdr row-char-array)))
+              (else (list digits-already-found row-char-array))))
+
+; Part numbers are (number-value start-x start-y end-x end-y) and all x/y
+; coordinates are inclusive
+(define (create-part-number number-start-x number-start-y number-length row-char-array)
+        (list (string->number (substring (apply string row-char-array) 0 number-length))
+              (- number-start-x 1) (- number-start-y 1)
+              (+ number-start-x number-length) (+ number-start-y 1)))
+
+(define (get-numbers-for-row column-number row-number row-char-array)
+        (if (eq? '() row-char-array) '()
+        (if (not (digit? (car row-char-array))) (get-numbers-for-row (+ 1 column-number) row-number (cdr row-char-array))
+        (let ((length-and-remaining (number-length 0 row-char-array)))
+             (cons (create-part-number column-number row-number (car length-and-remaining) row-char-array)
+                   (get-numbers-for-row (+ (car length-and-remaining) column-number) row-number (cadr length-and-remaining)))))))
+
+(define (get-numbers row-number diagram)
+        (if (eq? '() diagram)
+            '()
+            (append (get-numbers-for-row 0 row-number (string->list (car diagram)))
+                    (get-numbers (+ 1 row-number) (cdr diagram)))))
+
 (define (sum-of-part-numbers filename)
-        (read-file-to-list filename))
+        (let ((list-of-input (read-file-to-list filename)))
+             0))
+
 
 ; Plan for solving
 ; Run through file accumulating (x y) coords of symbols
 ; Run through file accumulating (number x-start y-start x-end y-end)
 ; for each number. Filter any number where a symbol isn't inside it's
 ; coords
+; Coordinate system (x y)
+; (0 0) (1 0) (2 0)
+; (1 0) (1 1)
+; (2 0)
 
 ; (define (run-test) (get-symbol-points-for-row 1 0 (string->list "...$.*....")))
-(define (run-test) (get-symbol-points 0 (read-file-to-list "2023-03/input-test.txt")))
+; (define (run-test) (get-symbol-points 0 (read-file-to-list "2023-03/input-test.txt")))
+; (define (run-test) (number-length 0 (string->list "633..dfws")))
+; (define (run-test) (number-length 0 (string->list "633")))
+; (define (run-test) (get-numbers-for-row 0 0 (string->list "..35..633.")))
+(define (run-test) (get-numbers 0 (read-file-to-list "2023-03/input-test.txt")))
+
 
 ; Run the sample. Should print 4361
 ; (define (run-test) (read-file-to-list "2023-03/input-test.txt"))
