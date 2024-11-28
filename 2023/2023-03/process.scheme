@@ -50,21 +50,21 @@
                     (get-numbers (+ 1 row-number) (cdr diagram)))))
 
 (define (is-part? potential-part symbols)
-        (if (eq? '() symbols) (begin (display "End of list") #f)
+        (if (eq? '() symbols) #f
         (let ((start-x  (list-ref potential-part 1))
               (start-y  (list-ref potential-part 2))
               (end-x    (list-ref potential-part 3))
               (end-y    (list-ref potential-part 4))
               (symbol-x (list-ref (car symbols) 0))
               (symbol-y (list-ref (car symbols) 1)))
-        (begin (display (string "symbol " symbol-x symbol-y
-                                " " start-x start-y end-x end-y
-                                " " (<= start-x symbol-x) "/" (<= symbol-x end-x) "/" (<= start-y symbol-y) "/" (<= symbol-y end-y)
-                                " --- "))
+        ; (begin (display (string "symbol " symbol-x symbol-y
+        ;                         " " start-x start-y end-x end-y
+        ;                         " " (<= start-x symbol-x) "/" (<= symbol-x end-x) "/" (<= start-y symbol-y) "/" (<= symbol-y end-y)
+        ;                         " --- "))
         (if (and (<= start-x symbol-x) (<= symbol-x end-x)
                  (<= start-y symbol-y) (<= symbol-y end-y))
             #t
-            (is-part? potential-part (cdr symbols)))))))
+            (is-part? potential-part (cdr symbols))))))
 
 (define (sum-of-part-numbers filename)
         (let ((list-of-input (read-file-to-list filename)))
