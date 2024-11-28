@@ -15,7 +15,7 @@
             (let ((remainder (get-symbol-points-for-row (+ 1 column-number) row-number (cdr row-char-array))))
                  (cond ((char=? #\. (car row-char-array)) remainder)
                        ((digit? (car row-char-array)) remainder)
-                       (else (cons (list row-number column-number) remainder))))))
+                       (else (cons (list column-number row-number) remainder))))))
 
 (define (get-symbol-points row-number diagram)
         (if (eq? '() diagram)
@@ -49,9 +49,28 @@
             (append (get-numbers-for-row 0 row-number (string->list (car diagram)))
                     (get-numbers (+ 1 row-number) (cdr diagram)))))
 
+(define (is-part? potential-part symbols)
+        (if (eq? '() symbols) (begin (display "End of list") #f)
+        (let ((start-x  (list-ref potential-part 1))
+              (start-y  (list-ref potential-part 2))
+              (end-x    (list-ref potential-part 3))
+              (end-y    (list-ref potential-part 4))
+              (symbol-x (list-ref (car symbols) 0))
+              (symbol-y (list-ref (car symbols) 1)))
+        (begin (display (string "symbol " symbol-x symbol-y
+                                " " start-x start-y end-x end-y
+                                " " (<= start-x symbol-x) "/" (<= symbol-x end-x) "/" (<= start-y symbol-y) "/" (<= symbol-y end-y)
+                                " --- "))
+        (if (and (<= start-x symbol-x) (<= symbol-x end-x)
+                 (<= start-y symbol-y) (<= symbol-y end-y))
+            #t
+            (is-part? potential-part (cdr symbols)))))))
+
 (define (sum-of-part-numbers filename)
         (let ((list-of-input (read-file-to-list filename)))
-             0))
+        (let ((symbols (get-symbol-points 0 list-of-input))
+              (potential-parts (get-numbers 0 list-of-input)))
+             0)))
 
 
 ; Plan for solving
@@ -69,8 +88,13 @@
 ; (define (run-test) (number-length 0 (string->list "633..dfws")))
 ; (define (run-test) (number-length 0 (string->list "633")))
 ; (define (run-test) (get-numbers-for-row 0 0 (string->list "..35..633.")))
-(define (run-test) (get-numbers 0 (read-file-to-list "2023-03/input-test.txt")))
+; (define (run-test) (get-numbers 0 (read-file-to-list "2023-03/input-test.txt")))
 
+; Should not be a part
+(define (run-test) (is-part? '(114 4 -1 8 1) (get-symbol-points 0 (read-file-to-list "2023-03/input-test.txt"))))
+
+; Should be a part
+; (define (run-test) (is-part? '(755 5 6 9 8) (get-symbol-points 0 (read-file-to-list "2023-03/input-test.txt"))))
 
 ; Run the sample. Should print 4361
 ; (define (run-test) (read-file-to-list "2023-03/input-test.txt"))
