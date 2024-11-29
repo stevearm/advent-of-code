@@ -98,8 +98,8 @@
 ; Should be a part
 ; (define (run-test) (is-part? '(755 5 6 9 8) (get-symbol-points 0 (read-file-to-list "2023-03/input-test.txt"))))
 
-; Run the sample. Should print 4361
+; Run the sample for part 1. Should print 4361
 ; (define (run-test) (sum-of-part-numbers "2023-03/input-test.txt"))
 
-; Run real question. Returns 539713
+; Run real question for part 1. Returns 539713
 (define (run-test) (sum-of-part-numbers "2023-03/input.txt" ))
