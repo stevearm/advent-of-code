@@ -12,6 +12,21 @@
             (begin (display ".") (newline))
             (begin (display (string "Expected: " expected " Got: " actual )) (newline))))
 
+(define (digit? char)
+        (and (char<=? #\0 char) (char<=? char #\9)))
+
+(define (number-length digits-already-found row-char-array)
+        (cond ((eq? '() row-char-array) (list digits-already-found '()))
+              ((digit? (car row-char-array))
+               (number-length (+ 1 digits-already-found) (cdr row-char-array)))
+              (else (list digits-already-found row-char-array))))
+
+(unit-test (number-length 0 (string->list "")) '(0 ()))
+(unit-test (number-length 0 '()) '(0 ()))
+(unit-test (number-length 0 (string->list "5")) '(1 ()))
+(unit-test (number-length 0 (string->list "5  ")) '(1 (#\space #\space)))
+
+
 (define (sum-of-differences filename)
         0)
 
