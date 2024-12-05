@@ -7,6 +7,11 @@
                            '()
                            (cons x (f (read-line p))))))))
 
+(define (unit-test actual expected)
+        (if (equal? actual expected)
+            (begin (display ".") (newline))
+            (begin (display (string "Expected: " expected " Got: " actual )) (newline))))
+
 (define (digit? char)
         (and (char<=? #\0 char) (char<=? char #\9)))
 
@@ -85,11 +90,11 @@
 ; (1 0) (1 1)
 ; (2 0)
 
-; (define (run-test) (get-symbol-points-for-row 1 0 (string->list "...$.*....")))
+(unit-test (get-symbol-points-for-row 0 0 (string->list "...$.*....")) '((3 0) (5 0)))
 ; (define (run-test) (get-symbol-points 0 (read-file-to-list "2023-03/input-test.txt")))
-; (define (run-test) (number-length 0 (string->list "633..dfws")))
-; (define (run-test) (number-length 0 (string->list "633")))
-; (define (run-test) (get-numbers-for-row 0 0 (string->list "..35..633.")))
+(unit-test (number-length 0 (string->list "633..dfws")) '(3 (#\. #\. #\d #\f #\w #\s)))
+(unit-test (number-length 0 (string->list "633")) '(3 ()))
+(unit-test (get-numbers-for-row 0 0 (string->list "..35..633.")) '((35 1 -1 4 1) (633 5 -1 9 1)))
 ; (define (run-test) (get-numbers 0 (read-file-to-list "2023-03/input-test.txt")))
 
 ; Should not be a part
@@ -98,8 +103,8 @@
 ; Should be a part
 ; (define (run-test) (is-part? '(755 5 6 9 8) (get-symbol-points 0 (read-file-to-list "2023-03/input-test.txt"))))
 
-; Run the sample for part 1. Should print 4361
-; (define (run-test) (sum-of-part-numbers "2023-03/input-test.txt"))
+; Check using the sample for part 1
+(unit-test (sum-of-part-numbers "2023-03/input-test.txt") 4361)
 
 ; Run real question for part 1. Returns 539713
 (define (run-test) (sum-of-part-numbers "2023-03/input.txt" ))
