@@ -26,6 +26,18 @@
 (unit-test (number-length 0 (string->list "5")) '(1 ()))
 (unit-test (number-length 0 (string->list "5  ")) '(1 (#\space #\space)))
 
+(define (split-number-string char-array)
+        (if (eq? '() char-array) '()
+        (let ((number-and-rest (number-length 0 char-array)))
+             (if (eq? 0 (car number-and-rest))
+                 (split-number-string (cdr char-array))
+                 (cons (string->number (substring (apply string char-array) 0 (car number-and-rest)))
+                       (split-number-string (cadr number-and-rest)))))))
+
+(unit-test (split-number-string (string->list "2   5")) '(2 5))
+(unit-test (split-number-string (string->list "2  ")) '(2))
+(unit-test (split-number-string (string->list "  5")) '(5))
+(unit-test (split-number-string (string->list "5")) '(5))
 
 (define (sum-of-differences filename)
         0)
