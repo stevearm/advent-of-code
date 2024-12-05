@@ -1,0 +1,23 @@
+(define (read-file-to-list filename)
+        (call-with-input-file
+            filename
+            (lambda (p)
+                (let f ((x (read-line p)))
+                       (if (eof-object? x)
+                           '()
+                           (cons x (f (read-line p))))))))
+
+(define (unit-test actual expected)
+        (if (equal? actual expected)
+            (begin (display ".") (newline))
+            (begin (display (string "Expected: " expected " Got: " actual )) (newline))))
+
+(define (sum-of-differences filename)
+        0)
+
+
+; Check using the sample
+(unit-test (sum-of-differences "2024-01/input-test.txt") 11)
+
+; Run real question. Returns ?
+(define (run-test) (sum-of-differences "2024-01/input.txt" ))
