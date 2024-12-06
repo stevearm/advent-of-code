@@ -39,12 +39,69 @@
 (unit-test (split-number-string (string->list "  5")) '(5))
 (unit-test (split-number-string (string->list "5")) '(5))
 
+(define (get-lists filename)
+        (let ((input-tuples (map split-number-string (map string->list (read-file-to-list filename)))))
+             (list (map car input-tuples)
+                   (map cadr input-tuples))))
+
+(unit-test (get-lists "2024-01/input-test.txt") '((3 4 2 1 3 3) (4 3 5 3 9 3)))
+
+(define (length input-list)
+        (if (eq? '() input-list)
+            0
+            (+ 1 (length (cdr input-list)))))
+
+(unit-test (length '()) 0)
+(unit-test (length '(3 4 2 1 3 3)) 6)
+
+(define (split input-list spot)
+        (if (<= spot 0)
+            (list '() input-list)
+            (let ((rest (split (cdr input-list) (- spot 1))))
+                 (list (cons (car input-list) (car rest))
+                       (cadr rest)))))
+
+(unit-test (split '(1 2 3 4) 0) '(() (1 2 3 4)))
+(unit-test (split '(1 2 3 4) 1) '((1) (2 3 4)))
+(unit-test (split '(1 2 3 4) 2) '((1 2) (3 4)))
+
+(define (merge left-list right-list)
+        (cond ((eq? '() left-list) right-list)
+              ((eq? '() right-list) left-list)
+              ((< (car left-list) (car right-list)) (cons (car left-list) (merge (cdr left-list) right-list)))
+              (else (cons (car right-list) (merge left-list (cdr right-list))))))
+
+(unit-test (merge '() '(1 2 3 4)) '(1 2 3 4))
+(unit-test (merge '(1 2 3 4) '()) '(1 2 3 4))
+(unit-test (merge '(1 2) '(3 4)) '(1 2 3 4))
+(unit-test (merge '(1 4) '(2 3)) '(1 2 3 4))
+(unit-test (merge '(1 2 4) '(2 2 3)) '(1 2 2 2 3 4))
+
+(define (sort input-list)
+        (let ((list-length (length input-list)))
+        (cond ((= list-length 0) '())
+              ((= list-length 1) input-list)
+              ((= list-length 2) (if (< (car input-list) (cadr input-list))
+                                     input-list
+                                     (list (cadr input-list) (car input-list))))
+              (else (let ((halves (map sort (split input-list (floor (/ list-length 2.0))))))
+                         (merge (car halves) (cadr halves)))))))
+
+(unit-test (sort '(4 2 3 1)) '(1 2 3 4))
+(unit-test (sort '(1 3 3)) '(1 3 3))
+(unit-test (sort '(3 4 2 1 3 3)) '(1 2 3 3 3 4))
+
+
+
 (define (sum-of-differences filename)
-        0)
+        (let ((sorted-lists (map sort (get-lists filename))))
+        (let ((pairs (apply map list sorted-lists)))
+        (apply + (map (lambda (x) (abs (- (car x) (cadr x)))) pairs)))))
 
 
 ; Check using the sample
 (unit-test (sum-of-differences "2024-01/input-test.txt") 11)
+; (define (run-test) (sum-of-differences "2024-01/input-test.txt"))
 
-; Run real question. Returns ?
+; Run real question. Returns 1970720
 (define (run-test) (sum-of-differences "2024-01/input.txt" ))
