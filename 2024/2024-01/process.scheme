@@ -100,13 +100,19 @@
 
 (unit-test (sum-of-differences "2024-01/input-test.txt") 11)
 
+(define (similarity-score-single-list single-number list-of-numbers)
+        (apply + (map (lambda (x) (if (= single-number x) x 0)) list-of-numbers)))
+
+(unit-test (similarity-score-single-list 12 '(1 12 5 15 12 8)) 24)
+
 (define (similarity-score filename)
-        0)
+        (let ((lists (get-lists filename)))
+        (apply + (map (lambda (x) (similarity-score-single-list x (cadr lists))) (car lists)))))
 
 (unit-test (similarity-score "2024-01/input-test.txt") 31)
 
 ; Run real P1 question. Returns 1970720
 ; (define (run-test) (sum-of-differences "2024-01/input.txt" ))
 
-; Run real P2 question. Returns ?
+; Run real P2 question. Returns 17191599
 (define (run-test) (similarity-score "2024-01/input.txt" ))
