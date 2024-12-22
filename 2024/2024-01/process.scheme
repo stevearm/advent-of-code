@@ -98,10 +98,15 @@
         (let ((pairs (apply map list sorted-lists)))
         (apply + (map (lambda (x) (abs (- (car x) (cadr x)))) pairs)))))
 
-
-; Check using the sample
 (unit-test (sum-of-differences "2024-01/input-test.txt") 11)
-; (define (run-test) (sum-of-differences "2024-01/input-test.txt"))
 
-; Run real question. Returns 1970720
-(define (run-test) (sum-of-differences "2024-01/input.txt" ))
+(define (similarity-score filename)
+        0)
+
+(unit-test (similarity-score "2024-01/input-test.txt") 31)
+
+; Run real P1 question. Returns 1970720
+; (define (run-test) (sum-of-differences "2024-01/input.txt" ))
+
+; Run real P2 question. Returns ?
+(define (run-test) (similarity-score "2024-01/input.txt" ))
