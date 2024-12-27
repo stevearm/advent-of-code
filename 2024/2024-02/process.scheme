@@ -124,6 +124,12 @@
                       (get-number-lists filename))))
 
 (unit-test (count-safe-reports "2024-02/input-test.txt") 2)
+(unit-test (count-safe-reports "2024-02/input.txt") 524)
 
-; Run real question. Returns 524
-(define (run-test) (count-safe-reports "2024-02/input.txt"))
+(define (count-dampened-safe-reports filename)
+        0)
+
+(unit-test (count-safe-reports "2024-02/input-test.txt") 4)
+
+; (define (run-test) (count-safe-reports "2024-02/input.txt")) ; Part 1
+(define (run-test) (count-dampened-safe-reports "2024-02/input.txt")) ; Part 2
