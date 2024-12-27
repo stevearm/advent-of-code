@@ -9,8 +9,8 @@
 
 (define (unit-test actual expected)
         (if (equal? actual expected)
-            (begin (display ".") (newline))
-            (begin (display (string "Expected: " expected " Got: " actual )) (newline))))
+            (begin (display "."))
+            (begin (newline) (display (string "Expected: " expected " Got: " actual )) (newline))))
 
 (define (digit? char)
         (and (char<=? #\0 char) (char<=? char #\9)))
