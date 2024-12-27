@@ -1,0 +1,99 @@
+(define (read-file-to-list filename)
+        (call-with-input-file
+            filename
+            (lambda (p)
+                (let f ((x (read-line p)))
+                       (if (eof-object? x)
+                           '()
+                           (cons x (f (read-line p))))))))
+
+(define (unit-test actual expected)
+        (if (equal? actual expected)
+            (begin (display ".") (newline))
+            (begin (display (string "Expected: " expected " Got: " actual )) (newline))))
+
+(define (digit? char)
+        (and (char<=? #\0 char) (char<=? char #\9)))
+
+(define (number-length digits-already-found row-char-array)
+        (cond ((eq? '() row-char-array) (list digits-already-found '()))
+              ((digit? (car row-char-array))
+               (number-length (+ 1 digits-already-found) (cdr row-char-array)))
+              (else (list digits-already-found row-char-array))))
+
+(unit-test (number-length 0 (string->list "")) '(0 ()))
+(unit-test (number-length 0 '()) '(0 ()))
+(unit-test (number-length 0 (string->list "5")) '(1 ()))
+(unit-test (number-length 0 (string->list "5  ")) '(1 (#\space #\space)))
+
+(define (split-number-string char-array)
+        (if (eq? '() char-array) '()
+        (let ((number-and-rest (number-length 0 char-array)))
+             (if (eq? 0 (car number-and-rest))
+                 (split-number-string (cdr char-array))
+                 (cons (string->number (substring (apply string char-array) 0 (car number-and-rest)))
+                       (split-number-string (cadr number-and-rest)))))))
+
+(unit-test (split-number-string (string->list "2   5")) '(2 5))
+(unit-test (split-number-string (string->list "2  ")) '(2))
+(unit-test (split-number-string (string->list "  5")) '(5))
+(unit-test (split-number-string (string->list "5")) '(5))
+(unit-test (split-number-string (string->list "5 12 9")) '(5 12 9))
+
+(define (get-number-lists filename)
+        (map split-number-string (map string->list (read-file-to-list filename))))
+
+(unit-test (get-number-lists "2024-02/input-test.txt") '((7 6 4 2 1)
+                                                         (1 2 7 8 9)
+                                                         (9 7 6 2 1)
+                                                         (1 3 2 4 5)
+                                                         (8 6 4 4 1)
+                                                         (1 3 6 7 9)))
+
+(define (length input-list)
+        (if (eq? '() input-list)
+            0
+            (+ 1 (length (cdr input-list)))))
+
+(unit-test (length '()) 0)
+(unit-test (length '(3 4 2 1 3 3)) 6)
+
+(define (split input-list spot)
+        (if (<= spot 0)
+            (list '() input-list)
+            (let ((rest (split (cdr input-list) (- spot 1))))
+                 (list (cons (car input-list) (car rest))
+                       (cadr rest)))))
+
+(unit-test (split '(1 2 3 4) 0) '(() (1 2 3 4)))
+(unit-test (split '(1 2 3 4) 1) '((1) (2 3 4)))
+(unit-test (split '(1 2 3 4) 2) '((1 2) (3 4)))
+
+(define (sort-merge sorted-left-list sorted-right-list)
+        (cond ((eq? '() sorted-left-list) sorted-right-list)
+              ((eq? '() sorted-right-list) sorted-left-list)
+              ((< (car sorted-left-list) (car sorted-right-list))
+               (cons (car sorted-left-list)
+                     (sort-merge (cdr sorted-left-list) sorted-right-list)))
+              (else (cons (car sorted-right-list)
+                          (sort-merge sorted-left-list (cdr sorted-right-list))))))
+
+(unit-test (sort-merge '() '(1 2 3 4)) '(1 2 3 4))
+(unit-test (sort-merge '(1 2 3 4) '()) '(1 2 3 4))
+(unit-test (sort-merge '(1 2) '(3 4)) '(1 2 3 4))
+(unit-test (sort-merge '(1 4) '(2 3)) '(1 2 3 4))
+(unit-test (sort-merge '(1 2 4) '(2 2 3)) '(1 2 2 2 3 4))
+
+(define (sort input-list)
+        (let ((list-length (length input-list)))
+        (cond ((= list-length 0) '())
+              ((= list-length 1) input-list)
+              ((= list-length 2) (if (< (car input-list) (cadr input-list))
+                                     input-list
+                                     (list (cadr input-list) (car input-list))))
+              (else (let ((halves (map sort (split input-list (floor (/ list-length 2.0))))))
+                         (sort-merge (car halves) (cadr halves)))))))
+
+(unit-test (sort '(4 2 3 1)) '(1 2 3 4))
+(unit-test (sort '(1 3 3)) '(1 3 3))
+(unit-test (sort '(3 4 2 1 3 3)) '(1 2 3 3 3 4))
