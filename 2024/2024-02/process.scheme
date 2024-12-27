@@ -12,9 +12,8 @@
 
 (define (safe-row? single-row to-dampen)
         (if (< (length single-row) 2) #t
-        (if (< (car single-row) (cadr single-row))
-            (safe-row-continue? single-row 1 3 to-dampen)
-            (safe-row-continue? single-row -3 -1 to-dampen))))
+        (let ((brackets (if (< (car single-row) (cadr single-row)) '(1 3) '(-3 -1))))
+        (safe-row-continue? single-row (car brackets) (cadr brackets) to-dampen))))
 
 (unit-test (safe-row? '() #f) #t)
 (unit-test (safe-row? '(1) #f) #t)
