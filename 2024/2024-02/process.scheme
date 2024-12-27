@@ -39,12 +39,12 @@
         (apply + (map (lambda (x) (if (safe-row? x to-dampen) 1 0))
                       (get-number-lists filename))))
 
-(unit-test (count-safe-reports "2024-02/input-test.txt" #f) 2)
-(unit-test (count-safe-reports "2024-02/input.txt" #f) 524)
-(unit-test (count-safe-reports "2024-02/input-test.txt" #t) 4)
+(unit-test (list count-safe-reports "2024-02/input-test.txt" #f) 2)
+(unit-test (list count-safe-reports "2024-02/input.txt" #f) 524)
+(unit-test (list count-safe-reports "2024-02/input-test.txt" #t) 4)
 
-; Don't know the right answer, but 553 is too low
-(unit-test (count-safe-reports "2024-02/input.txt" #t) 554)
+; Don't know the right answer, but 566 is too low
+(unit-test (list count-safe-reports "2024-02/input.txt" #t) 567)
 
 ; (define (run-test) (count-safe-reports "2024-02/input.txt" #f)) ; Part 1
 (define (run-test) (count-safe-reports "2024-02/input.txt" #t)) ; Part 2
