@@ -38,18 +38,17 @@
 (unit-test (split-number-string (string->list "2  ")) '(2))
 (unit-test (split-number-string (string->list "  5")) '(5))
 (unit-test (split-number-string (string->list "5")) '(5))
+(unit-test (split-number-string (string->list "5 12 9")) '(5 12 9))
 
 (define (get-number-lists filename)
-        (let ((input-tuples (map split-number-string (map string->list (read-file-to-list filename)))))
-             (list (map car input-tuples)
-                   (map cadr input-tuples))))
+        (map split-number-string (map string->list (read-file-to-list filename))))
 
-(unit-test (get-number-lists "2024-01/input-test.txt") '((7 6 4 2 1)
-                                                  (1 2 7 8 9)
-                                                  (9 7 6 2 1)
-                                                  (1 3 2 4 5)
-                                                  (8 6 4 4 1)
-                                                  (1 3 6 7 9)))
+(unit-test (get-number-lists "2024-02/input-test.txt") '((7 6 4 2 1)
+                                                         (1 2 7 8 9)
+                                                         (9 7 6 2 1)
+                                                         (1 3 2 4 5)
+                                                         (8 6 4 4 1)
+                                                         (1 3 6 7 9)))
 
 (define (length input-list)
         (if (eq? '() input-list)
@@ -100,3 +99,31 @@
 (unit-test (sort '(3 4 2 1 3 3)) '(1 2 3 3 3 4))
 
 (define (run-test) 0)
+
+(define (safe-row-continue? single-row delta-min delta-max)
+        (if (eq? '() single-row) #t
+        (if (eq? '() (cdr single-row)) #t
+        (let ((delta (- (cadr single-row) (car single-row))))
+        (if (or (< delta delta-min) (< delta-max delta)) #f
+        (safe-row-continue? (cdr single-row) delta-min delta-max))))))
+
+(define (safe-row? single-row)
+        (if (< (length single-row) 2) #t
+        (if (< (car single-row) (cadr single-row))
+            (safe-row-continue? single-row 1 3)
+            (safe-row-continue? single-row -3 -1))))
+
+(unit-test (safe-row? '()) #t)
+(unit-test (safe-row? '(1)) #t)
+(unit-test (safe-row? '(1 1)) #f)
+(unit-test (safe-row? '(1 2 3)) #t)
+(unit-test (safe-row? '(3 2 1)) #t)
+
+(define (count-safe-reports filename)
+        (apply + (map (lambda (x) (if (safe-row? x) 1 0))
+                      (get-number-lists filename))))
+
+(unit-test (count-safe-reports "2024-02/input-test.txt") 2)
+
+; Run real question. Returns 524
+(define (run-test) (count-safe-reports "2024-02/input.txt"))
